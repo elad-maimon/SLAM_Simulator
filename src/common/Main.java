@@ -1,6 +1,7 @@
 package common;
 
 import org.eclipse.swt.widgets.Display;
+
 import simulator.*;
 
 public class Main {
@@ -10,7 +11,7 @@ public class Main {
 		Display display = new Display();
 
 		new SimulatorView(display, simulator).open();
-		display.dispose();		
+		display.dispose();	
 	}
 
 }

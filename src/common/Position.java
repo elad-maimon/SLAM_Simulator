@@ -49,8 +49,8 @@ public class Position {
 		location.y += y_orientation * direction;
 	}
 	
-	public void print() {
-		System.out.println("location: (" + this.location.x + "," + this.location.y 
-				+ ") heading " + this.heading);
+	public String toString() {
+		return "(" + this.location.x + "," + this.location.y 
+				+ ") heading " + this.heading;
 	}
 }

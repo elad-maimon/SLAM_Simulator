@@ -2,11 +2,8 @@ package simulator;
 
 import common.*;
 
-import java.io.File;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 
@@ -14,12 +11,8 @@ public class SimulatorView extends Composite {
 	private SimulatorController simulator;
 	
 	private Canvas              canvas;
-	private List                listRobots;
-	private List                listFiles;
-	private Text                robotName;
-	private Button              buttonAddArm;
-	private Button              buttonSmartRobot;
-	private Combo               robotType;
+	private Text                positionInformation;
+	private Text                sensorsInformation;
 	private MenuItem            startSimulationItem;
 	private MenuItem            stopSimulationItem;
 
@@ -27,47 +20,22 @@ public class SimulatorView extends Composite {
 		super(new Shell(display), SWT.NONE);
 		this.simulator = simulator;
 
-		this.getShell().setLayout(new GridLayout(2,false));
+		this.getShell().setLayout(new GridLayout(1, false));
 		this.getShell().setText(Config.MAIN_WIN_TEXT);
 		this.getShell().setSize(Config.MAIN_WIN_SIZE_X, Config.MAIN_WIN_SIZE_Y);
 	    
 	    // Add listener to handle default exit by the X button
 		this.getShell().addDisposeListener(new DefaultExit());
 
-	    // Call function to build the menu controls
 	    buildMenu();
-	    
-	    // Set the group of create robot
-	    //==============================
-	    Group createRobotGroup = new Group(this.getShell(), SWT.SHADOW_IN);
-	    createRobotGroup.setText("Create Robot");
-
-	    // makes it to take as much space it can:
-	    createRobotGroup.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
-	    // set the group layout to be 4 cols
-	    createRobotGroup.setLayout(new GridLayout(4, false));
-	    // Build the group components
-	    buildCreateRobotGroup(createRobotGroup);
-	    
-	    // Set the group of assign programs
-	    //=================================
-	    Group assignProgramsGroup = new Group(this.getShell(), SWT.SHADOW_IN);
-	    assignProgramsGroup.setText("Assign program to robot");
-
-	    // set the group layout to be 3 cols 
-	    assignProgramsGroup.setLayout(new GridLayout(3, false));
-	    // Build the group components
-	    buildAssignProgramGroup(assignProgramsGroup);
+	    buildInformationGroup();
 	    
 	    // Set the big drawing Canvas
 	    //===========================
 	    canvas = new Canvas(this.getShell(), SWT.BORDER);
-	    
-	    // set the canvas to take 2 cells
-	    canvas.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,true,2,1));
+	    canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	    canvas.setBackground(this.getShell().getDisplay().getSystemColor(1));
-	    canvas.addPaintListener(new DrawEnvironment()); // Listener to redraw the canvas
-	    
+	    canvas.addPaintListener(new DrawEnvironment());
 	    canvas.addKeyListener(new ReadMoveCommands());
 	}
 
@@ -79,15 +47,17 @@ public class SimulatorView extends Composite {
 	     * -> Stop Simulation (MenuItem)
 	     * -> Exit (MenuItem)
 	     * 
-	     * Box (Menu)  
-	     * -> Add Box (MenuItem)
+	     * Map (Menu)  
+	     * -> Load Map (MenuItem)
+	     * -> Draw Map (MenuItem)
+	     * -> Save Map (MenuItem)
 	     * =====================================================*/
-	    Menu     menuBar, fileMenu, boxMenu;
-	    MenuItem fileMenuHeader, boxMenuHeader;
+	    Menu     menuBar, fileMenu, mapMenu;
+	    MenuItem fileMenuHeader, mapMenuHeader;
 
 	    // Building the menus objects
 	    menuBar  = new Menu(this.getShell(), SWT.BAR);
-	    boxMenu  = new Menu(this.getShell(), SWT.DROP_DOWN);
+	    mapMenu  = new Menu(this.getShell(), SWT.DROP_DOWN);
 	    fileMenu = new Menu(this.getShell(), SWT.DROP_DOWN);
 
 	    // Building the file menu objects
@@ -111,50 +81,49 @@ public class SimulatorView extends Composite {
 	    exitItem.setText("E&xit");
 	    exitItem.addSelectionListener(new SelectionMenuExit());
 
-	    // Building the box menu objects
-	    boxMenuHeader  = new MenuItem(menuBar, SWT.CASCADE);
-	    boxMenuHeader.setMenu(boxMenu);
-	    boxMenuHeader.setText("&Box");
+	    // Building the map menu objects
+	    mapMenuHeader  = new MenuItem(menuBar, SWT.CASCADE);
+	    mapMenuHeader.setMenu(mapMenu);
+	    mapMenuHeader.setText("&Map");
 
-	    // MenuItem: Add Box
-	    MenuItem addBoxItem = new MenuItem(boxMenu, SWT.PUSH);
-	    addBoxItem.setText("&Add Box");
-	    addBoxItem.addSelectionListener(new SelectionMenuAddBox());
+	    // MenuItem: Load Map
+	    MenuItem loadMapItem = new MenuItem(mapMenu, SWT.PUSH);
+	    loadMapItem.setText("&Load Map");
+	    //loadMapItem.addSelectionListener(new SelectionMenuLoadMap());
+	    loadMapItem.addListener(SWT.Selection, new LoadMapListener());
 	    
+	    // MenuItem: Draw Map
+	    MenuItem drawMapItem = new MenuItem(mapMenu, SWT.PUSH);
+	    drawMapItem.setText("&Draw Map");
+	    drawMapItem.addSelectionListener(new SelectionMenuDrawMap());
+
+	    // MenuItem: Save Map
+	    MenuItem SaveMapItem = new MenuItem(mapMenu, SWT.PUSH);
+	    SaveMapItem.setText("&Save Map");
+	    SaveMapItem.addSelectionListener(new SelectionMenuSaveMap());
+
 	    this.getShell().setMenuBar(menuBar);
 	}
 	
-	private void buildCreateRobotGroup(Group g) {
-	    /* ================= Create robot group parts ==================
-	     * the group structure:
-	     * +--------------+---------+---------------------+----------+
-	     * | Name (Lable) | (Text)  | Add arm (Check)     |   Add    |
-	     * +--------------+---------+---------------------| (Button) |
-	     * | Type (Lable) | (Combo) | Smart robot (Check) |          |
-	     * +--------------+---------+---------------------+----------+
-	     * =============================================================*/
-		new Label(g, SWT.NONE).setText("Name");
-		robotName = new Text(g, SWT.BORDER);
-		buttonAddArm = new Button(g, SWT.CHECK);
-		buttonAddArm.setText("Add arm");
+	private void buildInformationGroup() {
+	    Group informationGroup = new Group(this.getShell(), SWT.SHADOW_IN);
+	    informationGroup.setText("Robot Information");
+	    
+	    // makes it to take as much space it can:
+	    informationGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		// Build the "Add" button
-		Button buttonAdd = new Button(g, SWT.PUSH);
-		buttonAdd.setText("Add");
-		GridData addButtonGrid = new GridData(50, 50);
-		addButtonGrid.verticalSpan = 2; // Set the button to span over 2 cells
-		buttonAdd.setLayoutData(addButtonGrid);
-//		buttonAdd.addSelectionListener(new SelectionAddRobot());
+	    // set the group layout to be 2 cols
+	    informationGroup.setLayout(new GridLayout(2, false));
 
-		new Label(g, SWT.NONE).setText("Type");
-		
-		// Build the robot types combo
-		robotType = new Combo(g, SWT.DROP_DOWN | SWT.READ_ONLY);
-//		robotType.setItems(Config.ROBOT_TYPES);
+		new Label(informationGroup, SWT.NONE).setText("Position:");
+		positionInformation = new Text(informationGroup, SWT.NONE);
+		positionInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		positionInformation.setEditable(false);
 
-		// Build the add arm check button
-		buttonSmartRobot = new Button(g, SWT.CHECK);
-		buttonSmartRobot.setText("Smart Robot");
+		new Label(informationGroup, SWT.NONE).setText("Sensors read:");
+		sensorsInformation = new Text(informationGroup, SWT.NONE);
+		sensorsInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		sensorsInformation.setEditable(false);
 	}
 
 	private void buildAssignProgramGroup(Group g){
@@ -166,20 +135,20 @@ public class SimulatorView extends Composite {
 	     * +-------------+----------+------------+
 	     * =============================================================*/
 		// headlines:
-		new Label(g,SWT.NONE).setText("Robots List");
-		new Label(g,SWT.NONE);	// blank
-		new Label(g,SWT.NONE).setText("Files List");
-		
-		// list button list
-		listRobots=new List(g,SWT.BORDER | SWT.V_SCROLL);
-		listRobots.setLayoutData(new GridData(150,80));
-		Button b=new Button(g,SWT.PUSH);
-		b.setText("<-");
+//		new Label(g,SWT.NONE).setText("Robots List");
+//		new Label(g,SWT.NONE);	// blank
+//		new Label(g,SWT.NONE).setText("Files List");
+//		
+//		// list button list
+//		listRobots=new List(g,SWT.BORDER | SWT.V_SCROLL);
+//		listRobots.setLayoutData(new GridData(150,80));
+//		Button b=new Button(g,SWT.PUSH);
+//		b.setText("<-");
 //		b.addSelectionListener(new SelectionAssign());
-		listFiles=new List(g,SWT.BORDER | SWT.V_SCROLL);		
-		listFiles.setLayoutData(new GridData(150,80));
-		File f=new File(".");
-		listFiles.setItems(f.list());
+//		listFiles=new List(g,SWT.BORDER | SWT.V_SCROLL);		
+//		listFiles.setLayoutData(new GridData(150,80));
+//		File f=new File(".");
+//		listFiles.setItems(f.list());
 	}
 	
 	public class DefaultExit implements DisposeListener {
@@ -216,6 +185,7 @@ public class SimulatorView extends Composite {
 			int headY = (int)(robotCanvasLocationY + Math.round(15 * Math.sin(headingRadians)));
 			e.gc.drawLine(robotCanvasLocationX, robotCanvasLocationY, headX, headY);  
 
+			positionInformation.setText(simulator.getRobotPosition().toString());
 		} 
 	}
 	
@@ -230,7 +200,52 @@ public class SimulatorView extends Composite {
 		}
 	}
 	
-	public class SelectionMenuAddBox implements SelectionListener {
+    class LoadMapListener implements Listener {
+		public void handleEvent(Event event) {
+			FileDialog fileDlg = new FileDialog(new Shell(), SWT.OPEN);
+			String[] filterExt = new String[1];
+			filterExt[0] = "*.slm";
+			fileDlg.setFilterExtensions(filterExt);
+			
+			String filename = fileDlg.open();
+			
+			// If user choose a file.
+			if (filename != null) {
+				int retval = simulator.loadMapFromFile(filename);
+	
+				if (retval != Config.RETVAL_SUCCESS) {
+					// TODO:
+				}
+				else {
+					// TODO: Draw the map
+				}
+			}
+		}
+	}
+
+    public class SelectionMenuLoadMap implements SelectionListener {
+		public void widgetDefaultSelected(SelectionEvent e) {
+//			new WinAddBox(parentShell, cmdExec, canvas);
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+//			new WinAddBox(parentShell, cmdExec, canvas);
+		}
+		
+	}
+
+	public class SelectionMenuDrawMap implements SelectionListener {
+		public void widgetDefaultSelected(SelectionEvent e) {
+//			new WinAddBox(parentShell, cmdExec, canvas);
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+//			new WinAddBox(parentShell, cmdExec, canvas);
+		}
+		
+	}
+
+	public class SelectionMenuSaveMap implements SelectionListener {
 		public void widgetDefaultSelected(SelectionEvent e) {
 //			new WinAddBox(parentShell, cmdExec, canvas);
 		}
@@ -259,13 +274,11 @@ public class SimulatorView extends Composite {
 	
 	public class SelectionMenuExit implements SelectionListener {
 		public void widgetDefaultSelected(SelectionEvent e) {
-			// Requires only to close the shell, it will invoke the default exit
-//			parentShell.dispose();
+			e.display.dispose();
 		}
 		
 		public void widgetSelected(SelectionEvent e) {
-			// Requires only to close the shell, it will invoke the default exit
-//			parentShell.dispose();
+			e.display.dispose();
 		}
 	}
 

@@ -39,6 +39,6 @@ public class Robot {
 	}
 	
 	private void updateSensors() {
-		position.print();
+		
 	}
 }

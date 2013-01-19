@@ -1,6 +1,11 @@
 package common;
 
-public class Map {
+import java.io.Serializable;
+
+public class Map implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	public static final int CELL_UNKNOWN      = 0;
 	public static final int CELL_FREE         = 1;
 	public static final int CELL_CAPTURED     = 2;
@@ -16,6 +21,19 @@ public class Map {
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				cells[i][j] = CELL_FREE;
+	}
+	
+	public String toString() {
+		StringBuffer mapStr = new StringBuffer(Integer.toString(this.size) + "\n");
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				mapStr.append(Integer.toString(cells[i][j]));
+			}
+			mapStr.append("\n");
+		}
+		
+		return mapStr.toString();
 	}
 	
 	public int cellStatus(Point p) {

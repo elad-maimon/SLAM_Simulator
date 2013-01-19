@@ -54,4 +54,8 @@ public class Config {
 //	public static final int      ADD_BOX_SIZE_X    = 180;
 //	public static final int      ADD_BOX_SIZE_Y    = 150;
 
+	
+	public static final int    RETVAL_SUCCESS = 0;
+	public static final int    RETVAL_FAIL    = -1;
+
 }
