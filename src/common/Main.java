@@ -13,5 +13,4 @@ public class Main {
 		new SimulatorView(display, simulator).open();
 		display.dispose();	
 	}
-
 }

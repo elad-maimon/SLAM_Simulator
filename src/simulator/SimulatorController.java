@@ -7,12 +7,12 @@ import java.io.*;
 import org.eclipse.swt.SWT;
 
 public class SimulatorController {
-	private Map   realMap; 
-	private Robot robot;
+	public Map   map; 
+	public Robot robot;
 	
 	public SimulatorController() {
-		this.realMap = new Map(Config.MAP_SIZE);
-		this.robot   = new Robot(realMap, Config.MAP_SIZE / 2, Config.MAP_SIZE / 2);
+		this.map   = new Map(Config.MAP_SIZE);
+		this.robot = new Robot(map, Config.MAP_SIZE / 2, Config.MAP_SIZE / 2);
 	}
 	
 	public void moveRobot(char key) {
@@ -31,28 +31,27 @@ public class SimulatorController {
 		}
 	}
 	
-	public Position getRobotPosition() {
-		return robot.getPosition();
-	}
-	
-	public void saveMapToFile(String filename) {
+	public int saveMapToFile(String filename) {
 		try {
 			FileOutputStream fileOut = new FileOutputStream(filename);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-
-			out.writeObject(realMap);
+			out.writeObject(map);
 			out.close();
 			fileOut.close();
+			return Config.RETVAL_SUCCESS;
 		} catch(IOException e) {
 			e.printStackTrace();
+			Msg.showAsync(SWT.ICON_ERROR, "Can't save map", "Failed to save map to file");
 		}
+		
+		return Config.RETVAL_FAIL;
 	}
 	
 	public int loadMapFromFile(String filename) {
 		try {
 			FileInputStream fileIn = new FileInputStream(filename);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			realMap = (Map)in.readObject();
+			map = (Map)in.readObject();
 			in.close();
 			fileIn.close();
 

@@ -11,8 +11,8 @@ public class Map implements Serializable {
 	public static final int CELL_CAPTURED     = 2;
 	public static final int CELL_OUT_OF_BOUND = 3;
 
-	private int[][] cells;
-	private int     size;
+	public int[][] cells;
+	public int     size;
 
 	public Map(int size) {
 		this.size = size;
