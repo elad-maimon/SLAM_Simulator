@@ -1,10 +1,12 @@
 package simulator;
 
-import java.util.ArrayList;
 import common.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import org.eclipse.swt.graphics.GC;
 
 public class Robot {
-	private Map               map;
+	private Map               map; // TODO: replace with simulator
 	private Position          position;
 	private ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 	
@@ -13,7 +15,7 @@ public class Robot {
 		this.position = new Position(x, y, 0);
 	}
 	
-	public Position getPosition() {
+	public Position position() {
 		return position;
 	}
 	
@@ -35,10 +37,27 @@ public class Robot {
 				this.position.setLocation(newPosition.location());
 		}
 		
-		updateSensors();
+		sensorsRead();
 	}
 	
-	private void updateSensors() {
-		
+	public void paint(GC gc) {
+		int robotCanvasLocationX = this.position().location().x;
+		int robotCanvasLocationY = map.size - this.position().location().y;
+		int robotCanvasHeading   = this.position().heading() - 90;
+
+		// Draw the robot circle 
+		gc.fillOval(robotCanvasLocationX - 4, robotCanvasLocationY - 4, 8, 8);
+
+		// Calculate and draw the heading indicator
+		double headingRadians = Math.toRadians(robotCanvasHeading);
+		int headX = (int)(robotCanvasLocationX + Math.round(10 * Math.cos(headingRadians)));
+		int headY = (int)(robotCanvasLocationY + Math.round(10 * Math.sin(headingRadians)));
+		gc.drawLine(robotCanvasLocationX, robotCanvasLocationY, headX, headY);
+	}
+	
+	private void sensorsRead() {
+		Iterator<Sensor> sensorIter = sensors.iterator();
+		while (sensorIter.hasNext())
+			sensorIter.next().read();
 	}
 }

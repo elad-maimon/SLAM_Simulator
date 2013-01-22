@@ -12,17 +12,16 @@ public class Point {
 		this(p.x, p.y);
 	}
 	
-	
 	public void clone(Point p) {
 		this.x = p.x;
 		this.y = p.y;
 	}
 
-//	public double calcDistance(Point p) {
-//		return (Math.sqrt(Math.pow(this.x - p.x, 2) +
-//				  Math.pow(this.y - p.y, 2)));
-//	}
-//	
+	public double calcDistance(Point p) {
+		return (Math.sqrt(Math.pow(this.x - p.x, 2) +
+				  Math.pow(this.y - p.y, 2)));
+	}
+
 //	@Override
 //	public boolean equals(Object p) {
 //		// Check for self comparison.

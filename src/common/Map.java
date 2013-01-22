@@ -2,6 +2,8 @@ package common;
 
 import java.io.Serializable;
 
+import org.eclipse.swt.graphics.GC;
+
 public class Map implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -23,6 +25,20 @@ public class Map implements Serializable {
 				cells[i][j] = CELL_FREE;
 	}
 	
+	public int cellStatus(Point p) {
+		if (p.x >= this.size || p.y >= this.size || p.x < 0 || p.y < 0)
+			return CELL_OUT_OF_BOUND;
+		else
+			return cells[p.x][p.y];
+	}
+
+	public void paint(GC gc) {
+		for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; j++)
+				if (cells[i][j] == CELL_CAPTURED)
+					gc.drawPoint(i, size - j);
+	}
+	
 	public String toString() {
 		StringBuffer mapStr = new StringBuffer(Integer.toString(this.size) + "\n");
 
@@ -34,12 +50,5 @@ public class Map implements Serializable {
 		}
 		
 		return mapStr.toString();
-	}
-	
-	public int cellStatus(Point p) {
-		if (p.x >= this.size || p.y >= this.size || p.x < 0 || p.y < 0)
-			return CELL_OUT_OF_BOUND;
-		else
-			return cells[p.x][p.y];
 	}
 }

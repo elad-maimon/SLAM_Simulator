@@ -31,6 +31,10 @@ public class Position {
 		this.location.clone(p);
 	}
 	
+	public void setHeading(int heading) {
+		this.heading = heading;
+	}
+	
 	public void turn(int direction) {
 		this.heading = (this.heading + direction + 360) % 360;
 	}

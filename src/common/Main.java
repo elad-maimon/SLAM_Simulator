@@ -7,7 +7,7 @@ import simulator.*;
 public class Main {
 
 	public static void main(String[] args) {
-		SimulatorController simulator = new SimulatorController();
+		SimulatorController simulator = new SimulatorController(Config.MAP_SIZE);
 		Display display = new Display();
 
 		new SimulatorView(display, simulator).open();

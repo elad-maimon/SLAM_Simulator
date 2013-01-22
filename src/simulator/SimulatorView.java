@@ -161,7 +161,7 @@ public class SimulatorView extends Composite {
 	    canvas = new Canvas(canvasComposite, SWT.NONE);
 	    canvas.setLocation(borderWidth, borderWidth);
 	    canvas.setSize(simulator.map.size, simulator.map.size);
-	    canvas.setBackground(this.getShell().getDisplay().getSystemColor(1));
+	    canvas.setBackground(Display.getCurrent().getSystemColor(1));
 
 	    MapDrawListener drawListener = new MapDrawListener();
 	    
@@ -194,27 +194,17 @@ public class SimulatorView extends Composite {
 	public class DrawEnvironment implements PaintListener {
 		// the drawing implemented method
 		public void paintControl(PaintEvent e) {
+			e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+			simulator.map.paint(e.gc);
+
 			if (!drawMapMode) {
-				int robotCanvasLocationX = simulator.robot.getPosition().location().x;
-				int robotCanvasLocationY = simulator.map.size - simulator.robot.getPosition().location().y;
-				int robotCanvasHeading   = simulator.robot.getPosition().heading() - 90;
-	
-				// Draw the robot circle 
-				e.gc.drawOval(robotCanvasLocationX - 4, robotCanvasLocationY - 4, 8, 8);
-	
-				// Calculate and draw the heading indicator
-				double headingRadians = Math.toRadians(robotCanvasHeading);
-				int headX = (int)(robotCanvasLocationX + Math.round(15 * Math.cos(headingRadians)));
-				int headY = (int)(robotCanvasLocationY + Math.round(15 * Math.sin(headingRadians)));
-				e.gc.drawLine(robotCanvasLocationX, robotCanvasLocationY, headX, headY);
-					
-				positionInformation.setText(simulator.robot.getPosition().toString());
+				e.gc.setLineWidth(2);
+				e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+				e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+
+				simulator.robot.paint(e.gc);
+				positionInformation.setText(simulator.robot.position().toString());
 			}
-			
-			for (int i = 0; i < simulator.map.size; i++)
-				for (int j = 0; j < simulator.map.size; j++)
-					if (simulator.map.cells[i][j] == Map.CELL_CAPTURED)
-						e.gc.drawPoint(i, simulator.map.size - j);
 		} 
 	}
 	
@@ -226,23 +216,23 @@ public class SimulatorView extends Composite {
 				return;
 
 			switch (e.type) {
-				case SWT.MouseDown:
-					startPoint = new Point(e.x, e.y);
-					break;
-				case SWT.MouseUp:
-					captureLineInMap(startPoint.x, startPoint.y, e.x, e.y);
-					canvas.redraw();
-					canvas.update();
-					startPoint = null;
-					break;
-				case SWT.MouseMove:
-					if (startPoint == null)
-						return;
-					
-					canvas.redraw();
-					canvas.update();
-					GC gc = new GC(canvas);
-					gc.drawLine(startPoint.x, startPoint.y, e.x, e.y);
+			case SWT.MouseDown:
+				startPoint = new Point(e.x, e.y);
+				break;
+			case SWT.MouseUp:
+				captureLineInMap(startPoint.x, startPoint.y, e.x, e.y);
+				canvas.redraw();
+				canvas.update();
+				startPoint = null;
+				break;
+			case SWT.MouseMove:
+				if (startPoint == null)
+					return;
+				
+				canvas.redraw();
+				canvas.update();
+				GC gc = new GC(canvas);
+				gc.drawLine(startPoint.x, startPoint.y, e.x, e.y);
 			}
 		}
 		

@@ -10,9 +10,9 @@ public class SimulatorController {
 	public Map   map; 
 	public Robot robot;
 	
-	public SimulatorController() {
-		this.map   = new Map(Config.MAP_SIZE);
-		this.robot = new Robot(map, Config.MAP_SIZE / 2, Config.MAP_SIZE / 2);
+	public SimulatorController(int map_size) {
+		this.map   = new Map(map_size);
+		this.robot = new Robot(map, map_size / 2, map_size / 2);
 	}
 	
 	public void moveRobot(char key) {
