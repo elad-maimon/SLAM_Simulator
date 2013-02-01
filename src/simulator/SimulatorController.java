@@ -5,14 +5,17 @@ import common.*;
 import java.io.*;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 
 public class SimulatorController {
-	public Map   map; 
-	public Robot robot;
+	public Map           map; 
+	public Robot         robot;
+	public SimulatorView view;
 	
-	public SimulatorController(int map_size) {
-		this.map   = new Map(map_size);
-		this.robot = new Robot(map, map_size / 2, map_size / 2);
+	public SimulatorController(Display display, int map_size) {
+		this.map   = new Map(map_size, Map.CELL_FREE);
+		this.robot = new Robot(this, map_size / 2, map_size / 2);
+		this.view  = new SimulatorView(display, this);
 	}
 	
 	public void moveRobot(char key) {
@@ -52,9 +55,9 @@ public class SimulatorController {
 			FileInputStream fileIn = new FileInputStream(filename);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			map = (Map)in.readObject();
+			robot.position().setLocation(new Point(map.size / 2, map.size / 2));
 			in.close();
 			fileIn.close();
-
 			return Config.RETVAL_SUCCESS;
 		} catch(IOException e) {
 			e.printStackTrace();

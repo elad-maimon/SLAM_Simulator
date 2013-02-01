@@ -18,7 +18,6 @@ public class Config {
 //	public static final String ERR_MSG_EXIST  = "Error: robot or box with that name already exists.\n";
 //
 //	// Messages add to the GUI
-//	public static final String GUI_MSG_REQ      = "Required field.";
 //	public static final String GUI_MSG_SEL_LIST = "Must select robot and file from the lists.";
 //
 //	//================
@@ -50,9 +49,10 @@ public class Config {
 	public static final int      MAIN_WIN_SIZE_Y   = 600;
 //	public static final int      DRAW_OVAL_RADIUS  = 10;
 	public static final String[] ROBOT_TYPES       = "RV1 RV2 Aibo".split(" ");
-//	public static final String   ADD_BOX_WIN_TEXT  = "Add Box";
-//	public static final int      ADD_BOX_SIZE_X    = 180;
-//	public static final int      ADD_BOX_SIZE_Y    = 150;
+
+	public static final String   ADD_MAP_DIALOG_TEXT   = "Add Box";
+	public static final int      ADD_MAP_DIALOG_SIZE_X = 190;
+	public static final int      ADD_MAP_DIALOG_SIZE_Y = 140;
 
 	
 	public static final int    RETVAL_SUCCESS = 0;

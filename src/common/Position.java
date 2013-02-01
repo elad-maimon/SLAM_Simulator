@@ -32,7 +32,7 @@ public class Position {
 	}
 	
 	public void setHeading(int heading) {
-		this.heading = heading;
+		this.heading = heading % 360;
 	}
 	
 	public void turn(int direction) {

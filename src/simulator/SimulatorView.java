@@ -1,7 +1,5 @@
 package simulator;
 
-import java.util.Iterator;
-
 import common.*;
 
 import org.eclipse.swt.SWT;
@@ -15,17 +13,18 @@ import org.eclipse.swt.widgets.*;
 public class SimulatorView extends Composite {
 	private SimulatorController simulator;
 	
-	private Canvas              canvas;
-	private Text                positionInformation;
-	private Text                sensorsInformation;
-	private MenuItem            startSimulationItem;
-	private MenuItem            stopSimulationItem;
-	private MenuItem            loadMapItem;
-	private MenuItem            drawMapItem;
-	private MenuItem            saveMapItem;
+	private Composite canvasComposite;
+	private Canvas    canvas;
+	private Text      positionInformation;
+	private Text      sensorsInformation;
+	private MenuItem  startSimulationItem;
+	private MenuItem  stopSimulationItem;
+	private MenuItem  loadMapItem;
+	private MenuItem  drawMapItem;
+	private MenuItem  saveMapItem;
 	
-	private boolean             drawMapMode = false;
-	private boolean             simulationMode = false;
+	private boolean   drawMapMode = false;
+	private boolean   simulationMode = false;
 
 	public SimulatorView(Display display, SimulatorController simulator) {
 		super(new Shell(display), SWT.NONE);
@@ -40,7 +39,7 @@ public class SimulatorView extends Composite {
 	    buildCanvasComposite();
 	    buildMenu();
 
-	    this.getShell().layout();
+	    this.layout();
 	}
 
 	private void buildMenu() {
@@ -106,7 +105,6 @@ public class SimulatorView extends Composite {
 	    // MenuItem: Load Map
 	    loadMapItem = new MenuItem(mapMenu, SWT.PUSH);
 	    loadMapItem.setText("&Load Map");
-	    //loadMapItem.addSelectionListener(new SelectionMenuLoadMap());
 	    loadMapItem.addListener(SWT.Selection, new LoadMapListener());
 	    
 	    // MenuItem: Draw Map
@@ -114,9 +112,14 @@ public class SimulatorView extends Composite {
 	    drawMapItem.setText("&Draw Map");
 	    drawMapItem.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event event) {
+	    		String size = new AddMapDialog(getShell()).open();
+	    		
+	    		if (size == null)
+	    			return;
+	    		
 				drawMapMode = true;
-				simulator.map = new Map(Config.MAP_SIZE);
-				redrawCanvas();
+				simulator.map = new Map(Integer.parseInt(size), Map.CELL_FREE);
+				rebuildCanvasComposite();
 				enableMenuItems();
 			}
 	    });
@@ -154,7 +157,7 @@ public class SimulatorView extends Composite {
 	private void buildCanvasComposite() {
 		int borderWidth = 3;
 		
-	    Composite canvasComposite = new Composite(this, SWT.NONE);
+	    canvasComposite = new Composite(this, SWT.NONE);
 	    canvasComposite.setLayoutData(new GridData(simulator.map.size + 2 * borderWidth, simulator.map.size + 2 * borderWidth));
 	    canvasComposite.setBackground(new Color(Display.getCurrent(), new RGB(220, 230, 240)));
 
@@ -163,7 +166,7 @@ public class SimulatorView extends Composite {
 	    canvas.setSize(simulator.map.size, simulator.map.size);
 	    canvas.setBackground(Display.getCurrent().getSystemColor(1));
 
-	    MapDrawListener drawListener = new MapDrawListener();
+	    DrawMapListener drawListener = new DrawMapListener();
 	    
 	    canvas.addListener (SWT.MouseDown, drawListener);
 	    canvas.addListener (SWT.MouseMove, drawListener);
@@ -176,6 +179,12 @@ public class SimulatorView extends Composite {
 				redrawCanvas();
 			}
 	    }); 
+	}
+	
+	private void rebuildCanvasComposite() {
+		canvasComposite.dispose();
+		buildCanvasComposite();
+		this.layout();
 	}
 	
 	private void enableMenuItems() {
@@ -198,17 +207,13 @@ public class SimulatorView extends Composite {
 			simulator.map.paint(e.gc);
 
 			if (!drawMapMode) {
-				e.gc.setLineWidth(2);
-				e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
-				e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
-
 				simulator.robot.paint(e.gc);
 				positionInformation.setText(simulator.robot.position().toString());
 			}
 		} 
 	}
 	
-	public class MapDrawListener implements Listener {
+	public class DrawMapListener implements Listener {
 		private Point startPoint = null;
 		
 		public void handleEvent (Event e) {
@@ -283,7 +288,7 @@ public class SimulatorView extends Composite {
 			if (retval == Config.RETVAL_SUCCESS) {
 				drawMapMode = false;
 				enableMenuItems();
-				redrawCanvas();
+				rebuildCanvasComposite();
 			}
 		}
 	}
@@ -310,6 +315,10 @@ public class SimulatorView extends Composite {
 		}
 	}
 
+	public void setSensorsInfoText(String text) {
+		sensorsInformation.setText(text);
+	}
+	
 	public void open() {
 		Display display = this.getDisplay();
 		Shell shell = this.getShell();

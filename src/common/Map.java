@@ -16,13 +16,13 @@ public class Map implements Serializable {
 	public int[][] cells;
 	public int     size;
 
-	public Map(int size) {
+	public Map(int size, int cells_init) {
 		this.size = size;
 		this.cells = new int[size][size];
 		
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
-				cells[i][j] = CELL_FREE;
+				cells[i][j] = cells_init;
 	}
 	
 	public int cellStatus(Point p) {
