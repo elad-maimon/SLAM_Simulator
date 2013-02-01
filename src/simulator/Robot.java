@@ -40,8 +40,8 @@ public class Robot {
 			
 			newPosition.move(direction);
 			
-			if (simulator.map.cellStatus(newPosition.location()) == Map.CELL_FREE)
-				this.position.setLocation(newPosition.location());
+			if (simulator.map.cellStatus(newPosition.x(), newPosition.y()) == Map.CELL_FREE)
+				this.position.clone(newPosition);
 		}
 		
 		sensorsRead();
@@ -52,8 +52,8 @@ public class Robot {
 		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 
 		
-		int robotCanvasLocationX = this.position().location().x;
-		int robotCanvasLocationY = simulator.map.size - this.position().location().y;
+		int robotCanvasLocationX = this.position().x();
+		int robotCanvasLocationY = simulator.map.size - this.position().y();
 		int robotCanvasHeading   = this.position().heading() - 90;
 
 		// Draw the robot circle 

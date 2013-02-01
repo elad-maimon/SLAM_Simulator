@@ -1,5 +1,7 @@
 package simulator;
 
+import java.awt.Point;
+
 import common.*;
 
 import org.eclipse.swt.SWT;

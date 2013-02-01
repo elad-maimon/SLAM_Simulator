@@ -1,8 +1,7 @@
-
 package common;
-import org.eclipse.swt.widgets.Display;
 
 import simulator.*;
+import org.eclipse.swt.widgets.Display;
 
 public class Main {
 

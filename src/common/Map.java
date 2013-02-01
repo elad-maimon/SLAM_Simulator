@@ -1,7 +1,9 @@
 package common;
 
+import java.awt.Point;
 import java.io.Serializable;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 
 public class Map implements Serializable {
@@ -24,14 +26,36 @@ public class Map implements Serializable {
 			for (int j = 0; j < size; j++)
 				cells[i][j] = cells_init;
 	}
-	
+
 	public int cellStatus(Point p) {
-		if (p.x >= this.size || p.y >= this.size || p.x < 0 || p.y < 0)
+		return cellStatus(p.x, p.y);
+	}
+	
+	public int cellStatus(int x, int y) {
+		if (x >= this.size || y >= this.size || x < 0 || y < 0)
 			return CELL_OUT_OF_BOUND;
 		else
-			return cells[p.x][p.y];
+			return cells[x][y];
 	}
 
+	public double distanceToObstacleAhead(Position pos) {
+		Point originalPoint = pos.toPoint();
+		
+		while (cellStatus(pos.toPoint()) == CELL_FREE || cellStatus(pos.toPoint()) == CELL_UNKNOWN)
+			pos.move(Position.FORWARD);
+		
+		switch (cellStatus(pos.toPoint())) {
+		case Map.CELL_CAPTURED:
+			return originalPoint.distance(pos.toPoint());
+		case Map.CELL_OUT_OF_BOUND:
+			return -1; // Represent infinity
+		default:
+			Msg.showAsync(SWT.ICON_ERROR, "Error reading sensor", "Found cell with unexpected status");
+			return -2; // Represent error
+		}
+
+	}
+	
 	public void paint(GC gc) {
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)

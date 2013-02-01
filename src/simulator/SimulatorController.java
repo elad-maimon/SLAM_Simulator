@@ -55,7 +55,7 @@ public class SimulatorController {
 			FileInputStream fileIn = new FileInputStream(filename);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			map = (Map)in.readObject();
-			robot.position().setLocation(new Point(map.size / 2, map.size / 2));
+			robot.position().clone(new Position(map.size / 2, map.size / 2, 0));
 			in.close();
 			fileIn.close();
 			return Config.RETVAL_SUCCESS;

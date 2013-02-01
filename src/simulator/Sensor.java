@@ -11,7 +11,7 @@ public class Sensor {
 	private Robot               robot;
 	private int                 installHeading;
 	public  String              name;
-	private Point               lastReadObject = null;
+	private Position            obstacleAhead = null;
 	
 	public Sensor(SimulatorController simulator, Robot robot, int installHeading, String name) {
 		this.simulator      = simulator;
@@ -21,31 +21,18 @@ public class Sensor {
 	}
 	
 	public double read() {
-		Position positionToCheck = new Position(robot.position());
-		positionToCheck.setHeading(robot.position().heading() + installHeading);
+		obstacleAhead = new Position(robot.position());
+		obstacleAhead.setHeading(robot.position().heading() + installHeading);
 		
-		while (simulator.map.cellStatus(positionToCheck.location()) == Map.CELL_FREE)
-			positionToCheck.move(Position.FORWARD);
-		
-		lastReadObject = new Point(positionToCheck.location());
-		
-		switch (simulator.map.cellStatus(positionToCheck.location())) {
-		case Map.CELL_CAPTURED:
-			return robot.position().location().calcDistance(positionToCheck.location());
-		case Map.CELL_OUT_OF_BOUND:
-			return -1; // Represent infinity
-		default:
-			Msg.showAsync(SWT.ICON_ERROR, "Error reading sensor", "Found cell with unexpected status");
-			return -2; // Represent error
-		}
+		return simulator.map.distanceToObstacleAhead(obstacleAhead);
 	}
 	
 	public void paint(GC gc) {
-		if (lastReadObject == null)
+		if (obstacleAhead == null)
 			return;
 
 		gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-		gc.drawLine(robot.position().location().x, simulator.map.size - robot.position().location().y,
-				    lastReadObject.x, simulator.map.size - lastReadObject.y);
+		gc.drawLine(robot.position().x(), simulator.map.size - robot.position().y(),
+				    obstacleAhead.x(), simulator.map.size - obstacleAhead.y());
 	}
 }

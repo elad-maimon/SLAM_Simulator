@@ -1,34 +1,43 @@
 package common;
 
+import java.awt.Point;
+
 public class Position {
 	public static final int FORWARD  = 1;
 	public static final int BACKWARD = -1;
-	public static final int LEFT     = -45;
-	public static final int RIGHT    = 45;
+	public static final int LEFT     = -5;
+	public static final int RIGHT    = 5;
 
-	private Point location;
-	private int   heading;
+	private double x;
+	private double y;
+	private int    heading;
 
 	public Position(int x, int y, int heading) {
-		this.location = new Point(x, y);
-		this.heading = heading;
+		this.x = x;
+		this.y = y;
+		setHeading(heading);
 	}
 
 	public Position(Position p) {
-		this.location = new Point(p.location());
-		this.heading  = p.heading();
+		clone(p);
 	}
 
-	public Point location() {
-		return this.location;
+	public void clone(Position p) {
+		this.x = p.x;
+		this.y = p.y;
+		setHeading(p.heading);
 	}
 	
+	public int x() {
+		return (int)Math.round(this.x);
+	}
+	
+	public int y() {
+		return (int)Math.round(this.y);
+	}
+
 	public int heading() {
 		return this.heading;
-	}
-	
-	public void setLocation(Point p) {
-		this.location.clone(p);
 	}
 	
 	public void setHeading(int heading) {
@@ -40,21 +49,20 @@ public class Position {
 	}
 	
 	public void move(int direction) {
-		int x_orientation = (this.heading > 0 && this.heading < 180) ? 1 : -1;
-		int y_orientation = (this.heading > 45 && this.heading < 270) ? -1 : 1;
+		double headingRadians = Math.toRadians(this.heading);
+		this.x = this.x + direction * Math.sin(headingRadians);
+		this.y = this.y + direction * Math.cos(headingRadians);
+	}
+	
+//	public double calcDistance(Position p) {
+//		return (Math.sqrt(Math.pow(x() - p.x(), 2) + Math.pow(y() - p.y(), 2)));
+//	}
 
-		if (this.heading == 0 || this.heading == 180)
-			x_orientation = 0;
-
-		if (this.heading == 90 || this.heading == 270)
-			y_orientation = 0;
-
-		location.x += x_orientation * direction;
-		location.y += y_orientation * direction;
+	public Point toPoint() {
+		return new Point(x(), y());
 	}
 	
 	public String toString() {
-		return "(" + this.location.x + "," + this.location.y 
-				+ ") heading " + this.heading;
+		return "(" + this.x() + "," + this.y() + ") heading " + this.heading;
 	}
 }

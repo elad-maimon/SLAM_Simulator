@@ -1,11 +1,7 @@
 package common;
 
-import java.io.IOException;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.*;
 
 // This class holds methods to performe general calulations, like point converts,
 // string functions etc.
