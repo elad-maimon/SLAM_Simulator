@@ -4,19 +4,22 @@ import common.*;
 import slam.*;
 
 import java.io.*;
+
+import monitor.MonitorController;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
 public class SimulatorController {
-	public Map           map; 
-	public Robot         robot;
-	public Slam          slam;
-	public SimulatorView view;
+	public Map               map; 
+	public Robot             robot;
+	public Slam              slam;
+	public SimulatorView     view;
 	
 	public SimulatorController(Display display, int map_size) {
-		this.map   = new Map(map_size, Map.CELL_FREE);
-		this.robot = new Robot(this, map_size / 2, map_size / 2);
-		this.view  = new SimulatorView(display, this);
+		this.map     = new Map(map_size, Map.CELL_FREE);
+		this.robot   = new Robot(this, map_size / 2, map_size / 2);
+		this.view    = new SimulatorView(display, this);
 	}
 	
 	public void moveRobot(char key) {

@@ -4,6 +4,10 @@ import java.awt.Point;
 
 import common.*;
 
+import monitor.MonitorController;
+import monitor.MonitorView;
+import monitor.MonitorView2;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
@@ -77,9 +81,20 @@ public class SimulatorView extends Composite {
 	    startSimulationItem.setText("&Start Simulation");
 	    startSimulationItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				simulator.slam = new Slam(simulator.map.size);
 				simulationMode = true;
 				enableMenuItems();
+				
+				Thread t = new Thread(new Runnable() {
+					public void run() {
+						getDisplay().syncExec(new Runnable() {
+							public void run() {
+								MonitorController monitor = new MonitorController(getDisplay(), simulator.map.size);
+								simulator.slam = new Slam(simulator.map.size, monitor);
+							}
+						});
+					}
+				});
+				t.start();
 			}
 		});
 
