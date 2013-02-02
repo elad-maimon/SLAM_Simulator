@@ -1,7 +1,6 @@
 package simulator;
 
 import common.*;
-import slam.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,12 +13,10 @@ public class Robot {
 	private SimulatorController simulator;
 	private Position            position;
 	private ArrayList<Sensor>   sensors = new ArrayList<Sensor>();
-	private Slam                slam;
 	
 	public Robot(SimulatorController simulator, int x, int y) {
 		this.simulator = simulator;
 		this.position  = new Position(x, y, 0);
-		this.slam      = new Slam();
 	}
 	
 	public Position position() {
@@ -31,20 +28,22 @@ public class Robot {
 	}
 	
 	public void move(int direction) {
-		if (direction == Position.LEFT || direction == Position.RIGHT)
+		if (direction == Position.LEFT || direction == Position.RIGHT) {
 			this.position.turn(direction);
-
+			sensorsRead(direction);
+		}
 		
 		if (direction == Position.FORWARD || direction == Position.BACKWARD) {
 			Position newPosition = new Position(this.position);
 			
 			newPosition.move(direction);
 			
-			if (simulator.map.cellStatus(newPosition.x(), newPosition.y()) == Map.CELL_FREE)
+			if (simulator.map.cellStatus(newPosition.x(), newPosition.y()) == Map.CELL_FREE) {
 				this.position.clone(newPosition);
+				sensorsRead(direction);
+			}
 		}
 		
-		sensorsRead();
 	}
 	
 	public void paint(GC gc) {
@@ -72,18 +71,25 @@ public class Robot {
 			sensorIter.next().paint(gc);
 	}
 	
-	private void sensorsRead() {
-		double       distance;
+	private void sensorsRead(int dir) {
+		double[]     distanceArr = new double[sensors.size()];
+		int[]        headingArr  = new int[sensors.size()];
+		int          index       = 0;
 		Sensor       currSensor;
 		StringBuffer sensorsInformation = new StringBuffer();
 		
 		Iterator<Sensor> sensorIter = sensors.iterator();
 		while (sensorIter.hasNext()) {
 			currSensor = sensorIter.next();
-			distance = currSensor.read();
-			sensorsInformation.append(String.format("%s: %.2f, ", currSensor.name, distance));
+			headingArr[index] = currSensor.installHeading();
+			distanceArr[index] = currSensor.read();
+			sensorsInformation.append(String.format("%s: %.2f, ", currSensor.name, distanceArr[index]));
+			index++;
 		}
 		
 		simulator.view.setSensorsInfoText(sensorsInformation.toString());
+		
+		if (simulator.slam != null)
+			simulator.slam.iterate(dir, headingArr, distanceArr);
 	}
 }

@@ -20,6 +20,10 @@ public class Sensor {
 		this.name           = new String(name);
 	}
 	
+	public int installHeading() {
+		return this.installHeading;
+	}
+	
 	public double read() {
 		obstacleAhead = new Position(robot.position());
 		obstacleAhead.setHeading(robot.position().heading() + installHeading);

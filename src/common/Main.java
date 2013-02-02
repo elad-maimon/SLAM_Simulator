@@ -1,6 +1,10 @@
 package common;
 
 import simulator.*;
+import slam.Slam;
+
+import monitor.MonitorView;
+
 import org.eclipse.swt.widgets.Display;
 
 public class Main {
@@ -14,8 +18,13 @@ public class Main {
 		simulator.robot.addSensor("front sensor", 0);
 		simulator.robot.addSensor("rear sensor", 180);
 		
-		simulator.view.open();
+//		simulator.view.open();
 
-		display.dispose();	
+		Slam slam = new Slam(200);
+		MonitorView monitor = new MonitorView(display, slam);
+		monitor.open();
+
+
+		display.dispose();
 	}
 }

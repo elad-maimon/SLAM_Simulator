@@ -53,7 +53,6 @@ public class Map implements Serializable {
 			Msg.showAsync(SWT.ICON_ERROR, "Error reading sensor", "Found cell with unexpected status");
 			return -2; // Represent error
 		}
-
 	}
 	
 	public void paint(GC gc) {

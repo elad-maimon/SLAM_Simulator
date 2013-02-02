@@ -54,10 +54,6 @@ public class Position {
 		this.y = this.y + direction * Math.cos(headingRadians);
 	}
 	
-//	public double calcDistance(Position p) {
-//		return (Math.sqrt(Math.pow(x() - p.x(), 2) + Math.pow(y() - p.y(), 2)));
-//	}
-
 	public Point toPoint() {
 		return new Point(x(), y());
 	}

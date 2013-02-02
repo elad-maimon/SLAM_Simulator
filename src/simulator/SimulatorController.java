@@ -1,15 +1,16 @@
 package simulator;
 
 import common.*;
+import slam.*;
 
 import java.io.*;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
 public class SimulatorController {
 	public Map           map; 
 	public Robot         robot;
+	public Slam          slam;
 	public SimulatorView view;
 	
 	public SimulatorController(Display display, int map_size) {
@@ -41,13 +42,13 @@ public class SimulatorController {
 			out.writeObject(map);
 			out.close();
 			fileOut.close();
+			robot.position().clone(new Position(map.size / 2, map.size / 2, 0));
 			return Config.RETVAL_SUCCESS;
 		} catch(IOException e) {
 			e.printStackTrace();
 			Msg.showAsync(SWT.ICON_ERROR, "Can't save map", "Failed to save map to file");
+			return Config.RETVAL_FAIL;
 		}
-		
-		return Config.RETVAL_FAIL;
 	}
 	
 	public int loadMapFromFile(String filename) {
@@ -55,9 +56,9 @@ public class SimulatorController {
 			FileInputStream fileIn = new FileInputStream(filename);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			map = (Map)in.readObject();
-			robot.position().clone(new Position(map.size / 2, map.size / 2, 0));
 			in.close();
 			fileIn.close();
+			robot.position().clone(new Position(map.size / 2, map.size / 2, 0));
 			return Config.RETVAL_SUCCESS;
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -66,8 +67,7 @@ public class SimulatorController {
 			e.printStackTrace();
 			Msg.showAsync(SWT.ICON_ERROR, "Can't open map", "File is not map format");
 		}
-		
+
 		return Config.RETVAL_FAIL;
 	}
-
 }

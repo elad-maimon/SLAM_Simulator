@@ -12,6 +12,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 
+import slam.Slam;
+
 public class SimulatorView extends Composite {
 	private SimulatorController simulator;
 	
@@ -75,6 +77,7 @@ public class SimulatorView extends Composite {
 	    startSimulationItem.setText("&Start Simulation");
 	    startSimulationItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
+				simulator.slam = new Slam(simulator.map.size);
 				simulationMode = true;
 				enableMenuItems();
 			}
@@ -202,7 +205,7 @@ public class SimulatorView extends Composite {
 		canvas.update();
 	}
 	
-	public class DrawEnvironment implements PaintListener {
+	private class DrawEnvironment implements PaintListener {
 		// the drawing implemented method
 		public void paintControl(PaintEvent e) {
 			e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
@@ -215,7 +218,7 @@ public class SimulatorView extends Composite {
 		} 
 	}
 	
-	public class DrawMapListener implements Listener {
+	private class DrawMapListener implements Listener {
 		private Point startPoint = null;
 		
 		public void handleEvent (Event e) {
@@ -273,7 +276,7 @@ public class SimulatorView extends Composite {
 		}
 	}
 	
-    public class LoadMapListener implements Listener {
+    private class LoadMapListener implements Listener {
 		public void handleEvent(Event event) {
 			FileDialog fileDlg = new FileDialog(new Shell(), SWT.OPEN);
 			fileDlg.setFilterNames(new String[] { "Slam Maps (*.slm)" });
@@ -295,7 +298,7 @@ public class SimulatorView extends Composite {
 		}
 	}
 
-	public class SaveMapListener implements Listener {
+	private class SaveMapListener implements Listener {
 		public void handleEvent(Event event) {
 			FileDialog fileDlg = new FileDialog(new Shell(), SWT.SAVE);
 			fileDlg.setFilterNames(new String[] { "Slam Maps (*.slm)" });
