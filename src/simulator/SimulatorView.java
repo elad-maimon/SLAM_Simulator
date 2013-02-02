@@ -88,8 +88,8 @@ public class SimulatorView extends Composite {
 					public void run() {
 						getDisplay().syncExec(new Runnable() {
 							public void run() {
-								MonitorController monitor = new MonitorController(getDisplay(), simulator.map.size);
-								simulator.slam = new Slam(simulator.map.size, monitor);
+//								MonitorController monitor = new MonitorController(getDisplay(), simulator.map.size);
+//								simulator.slam = new Slam(simulator.map.size, monitor);
 							}
 						});
 					}

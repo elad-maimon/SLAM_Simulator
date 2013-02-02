@@ -1,16 +1,6 @@
 package common;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 import simulator.*;
-import slam.Slam;
-
-import monitor.MapCanvas;
-import monitor.MonitorController;
-import monitor.MonitorView;
-import monitor.MonitorView2;
-
 import org.eclipse.swt.widgets.Display;
 
 public class Main {
@@ -25,7 +15,7 @@ public class Main {
 		simulator.robot.addSensor("rear sensor", 180);
 
 		simulator.view.open();
-
+		
 		display.dispose();
 	}
 }

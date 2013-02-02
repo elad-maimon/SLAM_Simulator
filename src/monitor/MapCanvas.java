@@ -12,7 +12,6 @@ public class MapCanvas extends JPanel {
 	
     public MapCanvas(Map map){
     	this.map = map;
-    	randomize();
         int preferredSize = map.size * Config.GRID_SIZE_PIXELS;
         setPreferredSize(new Dimension(preferredSize, preferredSize));
     }

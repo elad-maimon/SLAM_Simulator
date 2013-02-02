@@ -1,20 +1,38 @@
 package monitor;
 
+import java.awt.Font;
+import java.awt.TextArea;
+
 import common.*;
 
 import javax.swing.*;
 
-public class MonitorView {
+@SuppressWarnings("serial")
+public class MonitorView extends JFrame {
 	private MapCanvas canvas; 
+	private TextArea  console;
 	
-    public MonitorView(Map map){
+    public MonitorView(){
+    	console = new TextArea();
+    	console.setFont(new Font("arial", Font.PLAIN, 20));
+    	add(console);
+
+    	setTitle(Config.MONITOR_VIEW_TEXT);
+    	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	setLocation(500, 100);
+		setVisible(true);
+		pack();
+    }
+    
+    public void setMap(Map map) {
+    	console.setVisible(false);
     	MapCanvas canvas = new MapCanvas(map);
-        
-        JFrame frame = new JFrame(Config.MONITOR_VIEW_TEXT);
-        frame.add(canvas);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.pack();
+    	add(canvas);
+    	pack();
+    }
+    
+    public void printMessage(String msg) {
+    	console.setText(console.getText() + msg + '\n');
     }
     
     public void updateMap() {
