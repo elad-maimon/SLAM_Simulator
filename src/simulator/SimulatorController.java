@@ -15,6 +15,7 @@ public class SimulatorController {
 	public Robot             robot;
 	public Slam              slam;
 	public SimulatorView     view;
+	public MonitorController monitor = new MonitorController();
 	
 	public SimulatorController(Display display, int map_size) {
 		this.map     = new Map(map_size, Map.CELL_FREE);

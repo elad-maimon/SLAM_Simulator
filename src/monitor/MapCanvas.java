@@ -40,7 +40,7 @@ public class MapCanvas extends JPanel {
 	        for (int j = 0; j < map.size; j++) {
 	            // Upper left corner of this terrain rect
 	            int x = i * rectWidth;
-	            int y = j * rectHeight;
+	            int y = (map.size - j - 1) * rectHeight;
 	            
 				switch(map.cells[i][j]) {
 				case(Map.CELL_UNKNOWN):

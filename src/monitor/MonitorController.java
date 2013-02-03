@@ -12,7 +12,7 @@ public class MonitorController {
 	
 	public void initSimulation(int map_size) {
 		this.map = new Map(map_size, Map.CELL_UNKNOWN);
-		this.view.setMap(map);
+		this.view.initMap(map);
 	}
 	
 	public static void main(String[] args) throws InterruptedException {

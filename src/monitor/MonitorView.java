@@ -19,14 +19,14 @@ public class MonitorView extends JFrame {
 
     	setTitle(Config.MONITOR_VIEW_TEXT);
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	setLocation(500, 100);
+    	setLocation(900, 100);
 		setVisible(true);
 		pack();
     }
     
-    public void setMap(Map map) {
+    public void initMap(Map map) {
     	console.setVisible(false);
-    	MapCanvas canvas = new MapCanvas(map);
+    	canvas = new MapCanvas(map);
     	add(canvas);
     	pack();
     }
