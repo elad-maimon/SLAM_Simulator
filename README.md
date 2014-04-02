@@ -1,4 +1,4 @@
-# Robot SLAM Simulator
+# Robot SLAM Simulator [![endorse](https://api.coderwall.com/elad-maimon/endorsecount.png)](https://coderwall.com/elad-maimon)
 
 SLAM (stands for Simultaneous Localization And Mapping) is a technique for robot's navigation in areas with no prior knowledge about it.
 
